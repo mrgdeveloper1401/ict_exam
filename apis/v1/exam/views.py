@@ -39,7 +39,8 @@ class ExamViewSet(viewsets.ModelViewSet):
             "time_limit",
             "creator__full_name",
             "is_active",
-            "exam_image"
+            "exam_image",
+            "exam_type"
         )
         if self.request.user.is_staff is False:
                 query.filter(is_active=True)
