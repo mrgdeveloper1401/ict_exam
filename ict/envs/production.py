@@ -60,3 +60,6 @@ CSRF_COOKIE_AGE = 3600
 #
 CELERY_BROKER_URL = config('PROD_CELERY_BROKER_URL', cast=str)
 CELERY_RESULT_BACKEND = config("PROD_CELERY_RESULT_BACKEND", cast=str)
+
+# config secret key for simple jwt
+SIMPLE_JWT['SIGNING_KEY'] = SECRET_KEY
