@@ -9,7 +9,8 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-from datetime import timedelta
+import os
+from datetime import timedelta, datetime
 from pathlib import Path
 from decouple import config
 
@@ -161,3 +162,55 @@ AUTH_USER_MODEL = "account_app.User"
 
 # max size
 IMAGE_SIZE_MAX = 2
+
+# config email backend
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', cast=str)
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', cast=str)
+DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', cast=str)
+
+
+# config logging in django
+# with logging django
+log_dir = os.path.join(BASE_DIR / 'general_log_django', datetime.today().strftime("%Y-%m-%d"))
+os.makedirs(log_dir, exist_ok=True)
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "color": {
+            "()": "colorlog.ColoredFormatter",
+            "format": "%(log_color)s%(levelname)s %(reset)s%(asctime)s %(module)s %(process)d %(thread)d %(message)s",
+            "datefmt": "%Y-%m-%d %H:%M:%S",
+        },
+    },
+    "handlers": {
+        "error_file": {
+            "level": "ERROR",
+            "class": "logging.FileHandler",
+            "formatter": "color",
+            "filename": os.path.join(BASE_DIR / log_dir / 'error_file.log')
+        },
+        "warning_file": {
+            "level": "WARN",
+            "class": "logging.FileHandler",
+            "formatter": "color",
+            "filename": os.path.join(BASE_DIR / log_dir / 'warning_file.log')
+        },
+        "critical_file": {
+            "level": "CRITICAL",
+            "class": "logging.FileHandler",
+            "formatter": "color",
+            "filename": os.path.join(BASE_DIR / log_dir / 'critical_file.log')
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["warning_file", "critical_file", "error_file"],
+            'propagate': True,
+        }
+    }
+}
