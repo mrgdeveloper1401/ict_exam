@@ -1,7 +1,8 @@
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, permissions, mixins, views, response, generics
 
-from account_app.models import User
+from account_app.models import User, Student
+from ict.utils.pagination import CommonPagination
 from . import serializers
 from .permissions import NotAuthenticated
 from .serializers import TokenResponseSerializer
@@ -63,21 +64,3 @@ class RequestOtpVerifyView(views.APIView):
         serializer.is_valid(raise_exception=True)
         token = serializer.validated_data['token']
         return response.Response(token)
-
-
-class UserProfileViewSet(viewsets.ModelViewSet):
-    serializer_class = serializers.AdminUserProfileSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    queryset = User.objects.all()
-
-    def get_queryset(self):
-        if not self.request.user.is_staff:
-            return self.queryset.filter(id=self.request.user.id)
-        else:
-            return super().get_queryset()
-
-    def get_serializer_class(self):
-        if self.request.user.is_staff:
-            return self.serializer_class
-        else:
-            return serializers.UserProfileSerializer

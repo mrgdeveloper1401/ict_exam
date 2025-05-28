@@ -28,7 +28,8 @@ drf_schema_urls = [
 ]
 
 v1_apis = [
-    path("auth/", include("apis.v1.account.urls", namespace="v1_auth")),
+    path("v1/auth/", include("apis.v1.account.urls", namespace="v1_auth")),
+    path("v1/exam/", include("apis.v1.exam.urls", namespace="v1_exam")),
 ]
 urlpatterns = [
        path('admin/', admin.site.urls),

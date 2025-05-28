@@ -37,10 +37,12 @@ INSTALLED_APPS = [
     "exam_app.apps.ExamAppConfig",
     "core_app.apps.CoreAppConfig",
     "course_app.apps.CourseAppConfig",
+    "rest_framework",
 
     # third party package
     "drf_spectacular",
     "treebeard",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -58,7 +60,7 @@ ROOT_URLCONF = 'ict.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
+        'DIRS': []
         ,
         'APP_DIRS': True,
         'OPTIONS': {
@@ -119,6 +121,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # rest framework config
 REST_FRAMEWORK = {
+    # set authentication
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
     # swagger doct schema
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     # versioning
@@ -130,8 +136,8 @@ REST_FRAMEWORK = {
 
 # Spectacular settings
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'Your Project API',
-    'DESCRIPTION': 'Your project description',
+    'TITLE': 'ict exam',
+    'DESCRIPTION': 'ict exam',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     # OTHER SETTINGS

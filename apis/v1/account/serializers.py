@@ -1,9 +1,10 @@
 import random
 
 from django.contrib.auth import authenticate
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
 
 from account_app.validators import PhoneNumberValidator
+from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
 from account_app.models import User, Otp
 
@@ -37,13 +38,20 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "success": True
         }
 
+class TokenSerializer(serializers.Serializer):
+    """
+    show response token after successfully login and signup
+    """
+    refresh = serializers.CharField()
+    access = serializers.CharField()
+
 
 class TokenResponseSerializer(serializers.Serializer):
     """
     for use response login and signup serializer
     """
     success = serializers.BooleanField()
-    token = serializers.CharField()
+    token = TokenSerializer()
     is_staff = serializers.BooleanField()
     role = serializers.CharField()
 
@@ -65,16 +73,11 @@ class UserLoginSerializer(serializers.Serializer):
 
         # invalid phone and password
         if not user:
-            raise serializers.ValidationError(
-                "phone and password is invalid",
-                code='authorization'
-            )
-
-        # user inactive
-        if not user.is_active:
-            raise serializers.ValidationError(
-                "This account is inactive.",
-                code='inactive'
+            raise CustomValidationError(
+                {
+                    "message": "phone and password is invalid",
+                    "success": False
+                }
             )
 
         # verify user
@@ -184,18 +187,7 @@ class AdminUserProfileSerializer(serializers.ModelSerializer):
         exclude = (
             "groups",
             "user_permissions",
-            "password"
+            "password",
+            "is_deleted",
+            "deleted_at"
         )
-
-
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "full_name",
-            "email",
-            "nation_code",
-            "is_staff"
-        )
-        read_only_fields = ("is_staff",)

@@ -9,7 +9,6 @@ app_name = "v1_auth"
 router = routers.DefaultRouter()
 
 router.register(r'signup', views.UserRegisterViewSet, basename='user')
-# router.register("profile", views.UserProfileViewSet, basename='profile')
 
 urlpatterns = [
     path("", include(router.urls)),

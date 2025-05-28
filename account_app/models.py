@@ -36,6 +36,7 @@ class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
 
     class Meta:
         db_table = "auth_user"
+        ordering = ("-created_at",)
 
 
 class Student(ModifyMixin, SoftDeleteMixin):

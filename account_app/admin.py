@@ -16,8 +16,7 @@ class OtpAdmin(admin.ModelAdmin):
 
 @admin.register(models.User)
 class UserAdmin(BaseUserAdmin):
-    add_form_template = "admin/auth/user/add_form.html"
-    change_user_password_template = None
+    search_help_text = _("برای جست و میتوانید از شماره موبایل استفاده کنید")
     fieldsets = (
         (None, {"fields": ("phone_number", "password")}),
         (_("Personal info"), {"fields": ("full_name", "email", "user_type")}),
@@ -35,7 +34,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "created_at", "updated_at")}),
     )
-    list_editable = ("user_type",)
+    list_editable = ("user_type", "is_active")
     add_fieldsets = (
         (
             None,
@@ -45,9 +44,9 @@ class UserAdmin(BaseUserAdmin):
             },
         ),
     )
-    list_display = ("phone_number", "email", "full_name", "user_type", "is_staff", "created_at")
+    list_display = ("phone_number", "email", "full_name", "user_type", "is_staff", "is_active", "created_at")
     list_filter = ("is_staff", "is_superuser", "is_active", "groups")
-    search_fields = ("phone_number", "full_name", "email")
+    search_fields = ("phone_number", )
     ordering = ("-created_at",)
     filter_horizontal = (
         "groups",
