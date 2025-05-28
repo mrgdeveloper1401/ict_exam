@@ -23,8 +23,6 @@ class ExamViewSet(viewsets.ModelViewSet):
     )
     serializer_class = serializers.ExamSerializer
     pagination_class = CommonPagination
-    filterset_fields = ("title",)
-    filter_backends = (DjangoFilterBackend,)
 
     # if user is admin equal true, can create and deleted and update view
     def get_permissions(self):
@@ -33,3 +31,10 @@ class ExamViewSet(viewsets.ModelViewSet):
         else:
             self.permission_classes = (permissions.IsAdminUser,)
         return super().get_permissions()
+
+    def filter_queryset(self, queryset):
+        title = self.request.query_params.get("title", None)
+
+        if title:
+            queryset = queryset.filter(title__icontains=title)
+        return queryset
