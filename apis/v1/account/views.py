@@ -1,11 +1,11 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, views, response, generics
+from rest_framework import viewsets, mixins, views, response, generics, permissions
 
-from account_app.models import User
+from account_app.models import User, Student
 # from ict.utils.pagination import CommonPagination
 from . import serializers
 from .permissions import NotAuthenticated
-from .serializers import TokenResponseSerializer
+from .serializers import TokenResponseSerializer, StudentProfileSerializer
 
 
 class UserRegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -67,3 +67,28 @@ class UserLoginView(views.APIView):
 #         serializer.is_valid(raise_exception=True)
 #         token = serializer.validated_data['token']
 #         return response.Response(token)
+
+
+class StudentProfileViewSet(
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    viewsets.GenericViewSet
+):
+    serializer_class = serializers.StudentProfileSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        return Student.objects.select_related("user").filter(
+            user=self.request.user
+        ).only(
+            "user__full_name",
+            "user__email",
+            "user__nation_code",
+            "user__phone_number",
+            "user__user_type",
+            "student_number",
+            "student_image",
+            "grade",
+            "parent_phone"
+        )

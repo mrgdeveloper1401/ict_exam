@@ -3,7 +3,8 @@ from rest_framework import serializers
 
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
-from account_app.models import User
+from account_app.models import User, Student
+from core_app.models import Image
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -63,10 +64,14 @@ class CreateResponseSerializer(serializers.Serializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
+    """
+    used serializer UserLoginView
+    """
     phone_number = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
+        # get phone and password
         phone_number = attrs.get('phone_number')
         password = attrs.get('password')
 
@@ -92,6 +97,8 @@ class UserLoginSerializer(serializers.Serializer):
         #         "This account is not verified please login as otp",
         #         code='unverified'
         #     )
+
+        # create jwt token
         token = get_tokens_for_user(user)
         attrs['token'] = token
         attrs['tole'] = user.user_type
@@ -131,10 +138,10 @@ class UserLoginSerializer(serializers.Serializer):
         #         code="not_found"
         #     )
 
-    def to_representation(self, instance):
-        return {
-            "message": "code send"
-        }
+    # def to_representation(self, instance):
+    #     return {
+    #         "message": "code send"
+    #     }
 
 
 # class RequestVerifyOtpSerializer(serializers.Serializer):
@@ -187,13 +194,62 @@ class UserLoginSerializer(serializers.Serializer):
             #     return attrs
 
 
-class AdminUserProfileSerializer(serializers.ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        exclude = (
-            "groups",
-            "user_permissions",
-            "password",
-            "is_deleted",
-            "deleted_at"
+        fields = (
+            "full_name",
+            "email",
+            "nation_code",
+            "phone_number",
+            "user_type"
         )
+        read_only_fields = (
+            "user_type",
+            "email",
+            "phone_number",
+        )
+
+
+class StudentProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer()
+    student_image = serializers.PrimaryKeyRelatedField(
+        queryset=Image.objects.only(
+            "height",
+            "width",
+            "title",
+            "image"
+        ),
+    )
+
+    class Meta:
+        model = Student
+        fields = (
+            "id",
+            "user",
+            "student_number",
+            "student_image",
+            "grade",
+            "parent_phone"
+        )
+        read_only_fields = (
+            "student_number",
+        )
+
+    def update(self, instance, validated_data):
+        # get user data
+        user_data = validated_data.pop('user', None)
+
+        # update student field
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        instance.save()
+
+        # update user data
+        if user_data:
+            user_instance = instance.user
+            for attr, value in user_data.items():
+                setattr(user_instance, attr, value)
+            user_instance.save()
+
+        return instance
