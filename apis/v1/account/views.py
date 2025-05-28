@@ -1,19 +1,22 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, permissions, mixins, views, response, generics
+from rest_framework import viewsets, mixins, views, response, generics
 
-from account_app.models import User, Student
-from ict.utils.pagination import CommonPagination
+from account_app.models import User
+# from ict.utils.pagination import CommonPagination
 from . import serializers
 from .permissions import NotAuthenticated
 from .serializers import TokenResponseSerializer
 
 
 class UserRegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
+    """
+    condition --> you can only send phone_number and password for create user, full_name and email can not require
+    """
     serializer_class = serializers.UserRegisterSerializer
     permission_classes = (NotAuthenticated,)
 
     @extend_schema(
-        responses=serializers.TokenResponseSerializer
+        responses=serializers.CreateResponseSerializer
     )
     def create(self, request, *args, **kwargs):
         return super().create(request, *args, **kwargs)
@@ -47,20 +50,20 @@ class UserLoginView(views.APIView):
         )
 
 
-class RequestOtpView(generics.CreateAPIView):
-    serializer_class = serializers.RequestOtpSerializer
-    permission_classes = (NotAuthenticated,)
-    queryset = User.objects.only(
-        "phone_number"
-    )
+# class RequestOtpView(generics.CreateAPIView):
+#     serializer_class = serializers.RequestOtpSerializer
+#     permission_classes = (NotAuthenticated,)
+#     queryset = User.objects.only(
+#         "phone_number"
+#     )
 
 
-class RequestOtpVerifyView(views.APIView):
-    serializer_class = serializers.RequestVerifyOtpSerializer
-    permission_classes = (NotAuthenticated,)
-
-    def post(self, request, *args, **kwargs):
-        serializer = self.serializer_class(data=request.data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
-        token = serializer.validated_data['token']
-        return response.Response(token)
+# class RequestOtpVerifyView(views.APIView):
+#     serializer_class = serializers.RequestVerifyOtpSerializer
+#     permission_classes = (NotAuthenticated,)
+#
+#     def post(self, request, *args, **kwargs):
+#         serializer = self.serializer_class(data=request.data, context={"request": request})
+#         serializer.is_valid(raise_exception=True)
+#         token = serializer.validated_data['token']
+#         return response.Response(token)

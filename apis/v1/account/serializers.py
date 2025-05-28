@@ -1,42 +1,39 @@
-import random
-
 from django.contrib.auth import authenticate
-from rest_framework import serializers, exceptions
+from rest_framework import serializers
 
-from account_app.validators import PhoneNumberValidator
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
-from account_app.models import User, Otp
+from account_app.models import User
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
     token = serializers.SerializerMethodField()
+    user_type = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ("phone_number", "password", "full_name", "email", "token")
+        fields = ("phone_number", "password", "full_name", "email", "token", "user_type")
         extra_kwargs = {"password": {"write_only": True}}
 
     def create(self, validated_data):
-        password = validated_data.pop("password")
-        return User.objects.create_user(
-            password=password,
-            **validated_data
-        )
+        return User.objects.create_user(**validated_data)
 
-    def get_token(self, obj):
-        request = self.context.get('request')
-        # if user is new_user return token
-        if request and request.method == 'POST':
-            return get_tokens_for_user(obj)
-        return None
+    def get_token(self, user):
+        return get_tokens_for_user(user)
+
+    def get_user_type(self, user):
+        return user.user_type
 
     def to_representation(self, instance):
+        # get super data
         data = super().to_representation(instance)
+
         return {
             "token": data.get("token"),
-            "success": True
+            "success": True,
+            "role": data.get("user_type"),
         }
+
 
 class TokenSerializer(serializers.Serializer):
     """
@@ -48,11 +45,20 @@ class TokenSerializer(serializers.Serializer):
 
 class TokenResponseSerializer(serializers.Serializer):
     """
-    for use response login and signup serializer
+    for use response login  serializer
     """
     success = serializers.BooleanField()
     token = TokenSerializer()
     is_staff = serializers.BooleanField()
+    role = serializers.CharField()
+
+
+class CreateResponseSerializer(serializers.Serializer):
+    """
+    for use response signup serializer
+    """
+    success = serializers.BooleanField()
+    token = TokenSerializer()
     role = serializers.CharField()
 
 
@@ -93,37 +99,37 @@ class UserLoginSerializer(serializers.Serializer):
         return attrs
 
 
-class RequestOtpSerializer(serializers.Serializer):
-    phone_number = serializers.CharField(
-        validators=[PhoneNumberValidator()],
-    )
-
-    def create(self, validated_data):
-        # get phone
-        phone = validated_data.get('phone_number')
-
-        # get request
-        request = self.context.get('request')
-
-        # get user
-        get_user = User.objects.filter(
-            phone_number=phone
-        ).only(
-            "phone_number"
-        )
+# class RequestOtpSerializer(serializers.Serializer):
+#     phone_number = serializers.CharField(
+#         validators=[PhoneNumberValidator()],
+#     )
+#
+#     def create(self, validated_data):
+#         # get phone
+#         phone = validated_data.get('phone_number')
+#
+#         # get request
+#         request = self.context.get('request')
+#
+#         # get user
+#         get_user = User.objects.filter(
+#             phone_number=phone
+#         ).only(
+#             "phone_number"
+#         )
 
         # check user
-        if get_user:
-            return Otp.objects.create(
-                phone_number=phone,
-                device_ip=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR"),
-                otp_code=random.randint(100000, 999999)
-            )
-        else:
-            raise serializers.ValidationError(
-                detail={"message": "your account not exits please signup"},
-                code="not_found"
-            )
+        # if get_user:
+        #     return Otp.objects.create(
+        #         phone_number=phone,
+        #         device_ip=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR"),
+        #         otp_code=random.randint(100000, 999999)
+        #     )
+        # else:
+        #     raise serializers.ValidationError(
+        #         detail={"message": "your account not exits please signup"},
+        #         code="not_found"
+        #     )
 
     def to_representation(self, instance):
         return {
@@ -131,54 +137,54 @@ class RequestOtpSerializer(serializers.Serializer):
         }
 
 
-class RequestVerifyOtpSerializer(serializers.Serializer):
-    otp_phone = serializers.CharField()
+# class RequestVerifyOtpSerializer(serializers.Serializer):
+#     otp_phone = serializers.CharField()
 
-    def validate(self, attrs):
+    # def validate(self, attrs):
         # get object request
-        request = self.context.get('request')
+        # request = self.context.get('request')
 
         # get opt
-        otp = attrs.get("otp_phone")
+        # otp = attrs.get("otp_phone")
 
         # get user ip
-        user_ip = request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR")
+        # user_ip = request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR")
 
         # filter otp
-        otp = Otp.objects.filter(
-            otp_code=otp,
-            device_ip=user_ip
-        )
+        # otp = Otp.objects.filter(
+        #     otp_code=otp,
+        #     device_ip=user_ip
+        # )
 
         # check otp
-        if not otp:
-            raise serializers.ValidationError(
-                detail={"message": "your otp code is invalid"},
-                code="invalid_otp_code"
-            )
-        else:
+        # if not otp:
+        #     raise serializers.ValidationError(
+        #         detail={"message": "your otp code is invalid"},
+        #         code="invalid_otp_code"
+        #     )
+        # else:
             # get obj otp and check expired otp
-            otp = otp.first()
-            if otp.is_expired:
-                raise serializers.ValidationError(
-                    detail={"message": "your otp code is expired"},
-                    code="expired_otp_code"
-                )
+            # otp = otp.first()
+            # if otp.is_expired:
+            #     raise serializers.ValidationError(
+            #         detail={"message": "your otp code is expired"},
+            #         code="expired_otp_code"
+            #     )
 
             # get obj user
-            user = User.objects.filter(phone_number=otp.phone_number).only("phone_number")
+            # user = User.objects.filter(phone_number=otp.phone_number).only("phone_number")
 
             # check user and return token
-            if not user:
-                raise serializers.ValidationError(
-                    detail={"message": "your otp code is invalid"},
-                    code="invalid_otp_code"
-                )
-            else:
-                token = get_tokens_for_user(user.last())
-                attrs["token"] = token
-                otp.delete()
-                return attrs
+            # if not user:
+            #     raise serializers.ValidationError(
+            #         detail={"message": "your otp code is invalid"},
+            #         code="invalid_otp_code"
+            #     )
+            # else:
+            #     token = get_tokens_for_user(user.last())
+            #     attrs["token"] = token
+            #     otp.delete()
+            #     return attrs
 
 
 class AdminUserProfileSerializer(serializers.ModelSerializer):
