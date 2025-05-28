@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "core_app.apps.CoreAppConfig",
     "course_app.apps.CourseAppConfig",
     "rest_framework",
+    "storages",
 
     # third party package
     "drf_spectacular",
@@ -212,5 +213,27 @@ LOGGING = {
             "handlers": ["warning_file", "critical_file", "error_file"],
             'propagate': True,
         }
+    }
+}
+
+# config aws storage
+AWS_ACCESS_KEY_ID = config("AWS_ACCESS_KEY_ID", cast=str)
+AWS_SECRET_ACCESS_KEY = config("AWS_SECRET_KEY_ID", cast=str)
+AWS_S3_REGION_NAME = config("AWS_S3_REGION_NAME", cast=str)
+AWS_QUERYSTRING_AUTH = False
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_FILE_OVERWRITE = False
+AWS_STORAGE_BUCKET_NAME = config("AWS_STORAGE_BUCKET_NAME", cast=str)
+AWS_S3_ENDPOINT_URL=config("AWS_S3_ENDPOINT_URL", cast=str)
+
+# config storages
+STORAGES = {
+    # user bucket
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+    },
+    # user static_files
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     }
 }
