@@ -28,10 +28,11 @@ class Exam(ModifyMixin, SoftDeleteMixin):
     time_limit = models.PositiveIntegerField(
         help_text=_("مدت زمان")
     )
-    # passing_score = models.PositiveIntegerField(
-    #     help_text=_("نمره قبولی"),
-    #     validators=[MinValueValidator(0), MaxValueValidator(100)]
-    # )
+    exam_type = models.CharField(
+        help_text=_("نوع سوال"),
+        max_length=20,
+        blank=True,
+    )
     is_active = models.BooleanField(
         default=True,
         help_text=_("فعال")
