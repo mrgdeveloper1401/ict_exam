@@ -32,9 +32,15 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     "django.contrib.admin",
+    # third party app
+    "account_app.apps.AccountAppConfig",
+    "exam_app.apps.ExamAppConfig",
+    "core_app.apps.CoreAppConfig",
+    "course_app.apps.CourseAppConfig",
 
     # third party package
     "drf_spectacular",
+    "treebeard",
 ]
 
 MIDDLEWARE = [
@@ -143,3 +149,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
 }
+
+# auth use model
+AUTH_USER_MODEL = "account_app.User"
+
+# max size
+IMAGE_SIZE_MAX = 2
