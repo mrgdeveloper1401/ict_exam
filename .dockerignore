@@ -1,3 +1,4 @@
+.env
 base_image
 .gitignore
 ict_1.0.0.tar
