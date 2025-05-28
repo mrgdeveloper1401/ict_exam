@@ -30,7 +30,7 @@ services:
     image: docker.arvancloud.ir/nginx:1.27.5-alpine
     command: ["nginx", "-g", "daemon off;"]
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/
+      - nginx/nginx.conf:/etc/nginx/
     ports:
       - "80:80"
       - "443:443"
