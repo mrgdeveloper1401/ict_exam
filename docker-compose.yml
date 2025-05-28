@@ -13,7 +13,7 @@ services:
       - db
 
   db:
-    container_name: postgres
+    container_name: ictdb
     image: docker.arvancloud.ir/postgres:16.9-alpine
     expose:
       - 5432
@@ -54,5 +54,5 @@ services:
 
 
 volumes:
-  static_files:
+#  static_files:
   postgres_data:
