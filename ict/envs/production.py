@@ -32,7 +32,7 @@ STORAGES = {
 }
 
 # add installed app
-INSTALLED_APPS = [
+INSTALLED_APPS += [
     "corsheaders"
 ]
 
