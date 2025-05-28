@@ -7,4 +7,4 @@ COPY . .
 RUN adduser -D -H ict && \
     chown -R ict:ict /app
 
-USER mohammad
+USER ict
