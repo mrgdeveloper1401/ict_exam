@@ -34,6 +34,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         data = super().to_representation(instance)
         return {
             "token": data.get("token"),
+            "success": True
         }
 
 

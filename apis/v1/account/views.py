@@ -40,7 +40,8 @@ class UserLoginView(views.APIView):
             {
                 'token': token,
                 "is_staff": is_staff,
-                "role": role
+                "role": role,
+                "success": True,
             }
         )
 
