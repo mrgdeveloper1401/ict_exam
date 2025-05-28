@@ -6,7 +6,7 @@ from . import views
 
 app_name = "v1_auth"
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 
 router.register(r'signup', views.UserRegisterViewSet, basename='user')
 router.register(r'profile', views.StudentProfileViewSet, basename='student_profile')

@@ -4,7 +4,7 @@ from .views import CategoryViewSet, CourseViewSet
 
 app_name = 'v1_course'
 
-router = routers.DefaultRouter()
+router = routers.SimpleRouter()
 router.register(r'categories', CategoryViewSet, basename='category')
 
 courses_router = routers.NestedDefaultRouter(router, r'categories', lookup='category')
