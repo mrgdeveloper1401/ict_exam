@@ -1,11 +1,12 @@
+from django.core.cache import cache
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, views, response, generics, permissions
+from rest_framework import viewsets, mixins, views, response, status, permissions
+import random
 
 from account_app.models import User, Student
-# from ict.utils.pagination import CommonPagination
 from . import serializers
 from .permissions import NotAuthenticated
-from .serializers import TokenResponseSerializer, StudentProfileSerializer
+from .serializers import TokenResponseSerializer
 
 
 class UserRegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -92,3 +93,56 @@ class StudentProfileViewSet(
             "grade",
             "parent_phone"
         )
+
+
+class PasswordResetRequestView(views.APIView):
+    serializer_class = serializers.PasswordResetRequestSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+
+            # تولید کد تأیید (مثلاً 4 رقمی)
+            verification_code = str(random.randint(1000, 9999))
+
+            # ذخیره کد در کش به مدت 5 دقیقه
+            cache.set(f'password_reset_{phone_number}', verification_code, 300)
+
+            # در اینجا باید کد را به کاربر ارسال کنید (با SMS یا ایمیل)
+            # این بخش بستگی به سرویس SMS شما دارد
+            # send_sms(phone_number, f'کد تأیید شما: {verification_code}')
+
+            return response.Response({
+                'message': 'کد تأیید به شماره تلفن شما ارسال شد.',
+                'phone_number': phone_number,
+                'expires_in': '5 دقیقه'
+            }, status=status.HTTP_200_OK)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PasswordResetConfirmView(views.APIView):
+    serializer_class = serializers.PasswordResetConfirmSerializer
+
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            phone_number = serializer.validated_data['phone_number']
+            new_password = serializer.validated_data['new_password']
+
+            try:
+                user = User.objects.get(phone_number=phone_number)
+                user.set_password(new_password)
+                user.save()
+
+                # پاک کردن کد از کش
+                cache.delete(f'password_reset_{phone_number}')
+
+                return response.Response({
+                    'message': 'رمز عبور با موفقیت تغییر یافت.'
+                }, status=status.HTTP_200_OK)
+            except User.DoesNotExist:
+                return response.Response({
+                    'error': 'کاربر یافت نشد.'
+                }, status=status.HTTP_404_NOT_FOUND)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

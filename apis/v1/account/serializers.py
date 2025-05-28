@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
-from account_app.models import User, Student
+from account_app.models import User, Student, Otp
 from core_app.models import Image
 
 
@@ -253,3 +253,42 @@ class StudentProfileSerializer(serializers.ModelSerializer):
             user_instance.save()
 
         return instance
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=15)
+
+    def validate_phone_number(self, value):
+        if not User.objects.filter(phone_number=value).exists():
+            raise CustomValidationError(
+                {
+                    "message": "phone number is invalid",
+                    "success": False
+                }
+            )
+        return value
+
+    def create(self, validated_data):
+        # get obj request
+        request = self.context.get('request')
+
+        return Otp.objects.create(
+            phone_number=validated_data['phone_number'],
+            device_ip=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR"),
+        )
+
+    def to_representation(self, instance):
+        return {
+            "message": "code sned"
+        }
+
+
+class PasswordResetConfirmSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(max_length=15)
+    new_password = serializers.CharField(min_length=8, write_only=True)
+    confirm_password = serializers.CharField(min_length=8, write_only=True)
+
+    def validate(self, data):
+        if data['new_password'] != data['confirm_password']:
+            raise serializers.ValidationError({"confirm_password": "رمزهای عبور وارد شده یکسان نیستند."})
+        return data
