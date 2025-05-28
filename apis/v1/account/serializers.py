@@ -75,7 +75,7 @@ class UserLoginSerializer(serializers.Serializer):
         phone_number = attrs.get('phone_number')
         password = attrs.get('password')
 
-        # authenticate user
+        # authenticate user request, phone, password
         user = authenticate(
             request=self.context.get('request'),
             phone_number=phone_number,

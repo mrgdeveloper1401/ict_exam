@@ -18,7 +18,7 @@ class ExamViewSet(viewsets.ModelViewSet):
     # if user is admin equal true, can create and deleted and update view
     def get_permissions(self):
         if self.request.method in permissions.SAFE_METHODS:
-            self.permission_classes = (permissions.IsAuthenticated,)
+            self.permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
         else:
             self.permission_classes = (permissions.IsAdminUser,)
         return super().get_permissions()

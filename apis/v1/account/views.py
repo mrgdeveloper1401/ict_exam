@@ -146,3 +146,11 @@ class PasswordResetConfirmView(views.APIView):
                     'error': 'کاربر یافت نشد.'
                 }, status=status.HTTP_404_NOT_FOUND)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LogOutView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        del request.auth.token
+        return response.Response(status=status.HTTP_204_NO_CONTENT)
