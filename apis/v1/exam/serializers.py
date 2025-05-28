@@ -77,7 +77,7 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExamAttempt
         exclude = ("is_deleted", "deleted_at")
-        read_only_fields = ("exam", "user")
+        read_only_fields = ("exam", "user", "score", "ip_address", "result_color")
 
     def to_representation(self, instance):
         # super class
