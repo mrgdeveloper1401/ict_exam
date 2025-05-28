@@ -51,7 +51,7 @@ class Question(ModifyMixin, SoftDeleteMixin):
     """
     exam = models.ForeignKey(
         Exam,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='questions',
         help_text=_("Exam that this question belongs to")
     )
@@ -141,7 +141,7 @@ class ExamAttempt(ModifyMixin, SoftDeleteMixin):
     #     help_text=_("Did the user pass this attempt?")
     # )
     ip_address = models.GenericIPAddressField(
-        help_text=_("IP address from which the attempt was made")
+        help_text=_("ادرس ای پی کاربر")
     )
     result_color = models.CharField(
         max_length=30,
@@ -153,17 +153,6 @@ class ExamAttempt(ModifyMixin, SoftDeleteMixin):
     class Meta:
         db_table = "exam_attempt"
         ordering = ('-start_time',)
-
-    def calculate_score(self):
-        # محاسبه نمره کاربر
-        correct_answers = self.user_answers.filter(
-            option__is_correct=True
-        ).count()
-        total_questions = self.exam.questions.count()
-        self.score = (correct_answers / total_questions) * 100 if total_questions else 0
-        self.is_passed = self.score >= self.exam.passing_score
-        self.save()
-        return self.score
 
     def __str__(self):
         return f"{self.exam.title}"
