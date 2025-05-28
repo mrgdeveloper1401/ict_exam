@@ -5,6 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from treebeard.mp_tree import MP_Node
 
 from core_app.models import ModifyMixin, SoftDeleteMixin
+from core_app.validation import validate_image_size
 
 
 class Category(MP_Node, ModifyMixin, SoftDeleteMixin):
@@ -48,7 +49,8 @@ class Course(MP_Node, ModifyMixin, SoftDeleteMixin):
     )
     description = models.TextField(help_text=_('توضیحات درس'))
     # thumbnail = models.ForeignKey("core_app.Image", help_text=_('تصویر درس'), on_delete=models.PROTECT)
-    thumbnail = models.ImageField(upload_to="course/%Y/%m/%d", blank=True, null=True, help_text=_("تصویر درس"))
+    thumbnail = models.ImageField(upload_to="course/%Y/%m/%d", blank=True, null=True, help_text=_("تصویر درس"),
+                                  validators=[validate_image_size])
 
     # Technical specifications
     level = models.CharField(

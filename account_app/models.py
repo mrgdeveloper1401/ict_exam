@@ -9,6 +9,7 @@ from django.utils.translation import gettext_lazy as _
 from account_app.managers import UserManager
 from account_app.validators import unique_email_in_layer_app, unique_nation_code_in_layer_app, PhoneNumberValidator
 from core_app.models import ModifyMixin, SoftDeleteMixin, CreateMixin
+from core_app.validation import validate_image_size
 
 
 class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
@@ -45,7 +46,7 @@ class Student(ModifyMixin, SoftDeleteMixin):
     # student_image = models.ForeignKey("core_app.Image", on_delete=models.DO_NOTHING, related_name="student_image",
     #                                   null=True, blank=True)
     student_image = models.ImageField(upload_to="student_images/%Y/%m/%d", blank=True, null=True,
-                                      help_text=_("عکس دانش اموز"))
+                                      help_text=_("عکس دانش اموز"), validators=[validate_image_size])
     grade = models.CharField(max_length=20, blank=True)
     parent_phone = models.CharField(unique=True, max_length=15, validators=[PhoneNumberValidator()], blank=True, null=True)
 
