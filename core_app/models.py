@@ -43,27 +43,27 @@ class UpdateMixin(models.Model):
         abstract = True
 
 
-class Image(ModifyMixin, SoftDeleteMixin):
-    title = models.CharField(max_length=128, null=True, blank=True)
-    image = models.ImageField(width_field="width", height_field="height", upload_to="images/%Y/%m/%d",
-                              validators=(validate_image_size,),
-                              help_text="max size is 2 MG")
-    width = models.IntegerField(null=True, blank=True)
-    height = models.IntegerField(null=True, blank=True)
-    file_size = models.PositiveIntegerField(null=True, blank=True, help_text="file size as xx.b")
+# class Image(ModifyMixin, SoftDeleteMixin):
+#     title = models.CharField(max_length=128, null=True, blank=True)
+#     image = models.ImageField(width_field="width", height_field="height", upload_to="images/%Y/%m/%d",
+#                               validators=(validate_image_size,),
+#                               help_text="max size is 2 MG")
+#     width = models.IntegerField(null=True, blank=True)
+#     height = models.IntegerField(null=True, blank=True)
+#     file_size = models.PositiveIntegerField(null=True, blank=True, help_text="file size as xx.b")
 
-    @property
-    def image_url(self):
+    # @property
+    # def image_url(self):
         # show url image
-        return self.image.url if self.image else None
+        # return self.image.url if self.image else None
 
-    def save(self, *args, **kwargs):
+    # def save(self, *args, **kwargs):
         # save image size
-        self.file_size = self.image.size
-        return super().save(*args, **kwargs)
+        # self.file_size = self.image.size
+        # return super().save(*args, **kwargs)
 
-    class Meta:
-        db_table = "image"
-        verbose_name = "Image"
-        verbose_name_plural = "Images"
-        ordering = ('-created_at',)
+    # class Meta:
+    #     db_table = "image"
+    #     verbose_name = "Image"
+    #     verbose_name_plural = "Images"
+    #     ordering = ('-created_at',)

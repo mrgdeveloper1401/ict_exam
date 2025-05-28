@@ -35,7 +35,7 @@ class CourseAdmin(admin.ModelAdmin):
     search_fields = ('title', 'code', 'description')
     list_editable = ('is_active',)
     prepopulated_fields = {'slug': ('title',)}
-    raw_id_fields = ('category', 'thumbnail')
+    raw_id_fields = ('category',)
     autocomplete_fields = ('category',)
     list_select_related = ("category",)
 
@@ -55,9 +55,9 @@ class CourseAdmin(admin.ModelAdmin):
             "slug",
             "code",
             "description",
-            "thumbnail",
             "level",
             "credit",
             "duration",
-            "is_active"
+            "is_active",
+            "thumbnail"
         )

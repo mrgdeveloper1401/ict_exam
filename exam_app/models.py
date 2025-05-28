@@ -36,6 +36,12 @@ class Exam(ModifyMixin, SoftDeleteMixin):
         default=True,
         help_text=_("فعال")
     )
+    exam_image = models.ImageField(
+        upload_to="exam_images/%Y/%m/%d",
+        blank=True,
+        null=True,
+        help_text=_("کاور ازمون")
+    )
 
     class Meta:
         db_table = "exam"

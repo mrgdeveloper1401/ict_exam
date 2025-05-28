@@ -57,7 +57,7 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(models.Student)
 class StudentAdmin(admin.ModelAdmin):
-    raw_id_fields = ("user", "student_image")
+    raw_id_fields = ("user",)
     list_display = ("user", "student_number", "grade", "parent_phone", "created_at")
     list_per_page = 30
     search_fields = ("user__phone_number",)
@@ -71,5 +71,6 @@ class StudentAdmin(admin.ModelAdmin):
             "student_number",
             "grade",
             "parent_phone",
-            "created_at"
+            "created_at",
+            "student_image"
         )

@@ -4,7 +4,7 @@ from rest_framework import serializers
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
 from account_app.models import User, Student, Otp
-from core_app.models import Image
+# from core_app.models import Image
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -213,14 +213,6 @@ class UserSerializer(serializers.ModelSerializer):
 
 class StudentProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer()
-    student_image = serializers.PrimaryKeyRelatedField(
-        queryset=Image.objects.only(
-            "height",
-            "width",
-            "title",
-            "image"
-        ),
-    )
 
     class Meta:
         model = Student

@@ -47,7 +47,8 @@ class Course(MP_Node, ModifyMixin, SoftDeleteMixin):
         validators=[MinLengthValidator(3)]
     )
     description = models.TextField(help_text=_('توضیحات درس'))
-    thumbnail = models.ForeignKey("core_app.Image", help_text=_('تصویر درس'), on_delete=models.PROTECT)
+    # thumbnail = models.ForeignKey("core_app.Image", help_text=_('تصویر درس'), on_delete=models.PROTECT)
+    thumbnail = models.ImageField(upload_to="course/%Y/%m/%d", blank=True, null=True, help_text=_("تصویر درس"))
 
     # Technical specifications
     level = models.CharField(

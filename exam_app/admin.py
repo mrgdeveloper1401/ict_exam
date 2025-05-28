@@ -23,7 +23,8 @@ class ExamAdmin(admin.ModelAdmin):
             "time_limit",
             "created_at",
             "is_active",
-            "description"
+            "description",
+            "exam_image"
         )
 
 

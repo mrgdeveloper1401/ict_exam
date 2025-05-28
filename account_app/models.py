@@ -42,8 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
 class Student(ModifyMixin, SoftDeleteMixin):
     user = models.OneToOneField(User, on_delete=models.PROTECT, related_name="student")
     student_number = models.CharField(max_length=11, blank=True)
-    student_image = models.ForeignKey("core_app.Image", on_delete=models.DO_NOTHING, related_name="student_image",
-                                      null=True, blank=True)
+    # student_image = models.ForeignKey("core_app.Image", on_delete=models.DO_NOTHING, related_name="student_image",
+    #                                   null=True, blank=True)
+    student_image = models.ImageField(upload_to="student_images/%Y/%m/%d", blank=True, null=True,
+                                      help_text=_("عکس دانش اموز"))
     grade = models.CharField(max_length=20, blank=True)
     parent_phone = models.CharField(unique=True, max_length=15, validators=[PhoneNumberValidator()], blank=True, null=True)
 
