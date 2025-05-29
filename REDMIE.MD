@@ -14,8 +14,10 @@
 
 - Python 3.11 یا بالاتر
 - Django 5.2 یا بالاتر
- −![ساختار دیتابیس](ict_exam.drawio.png)
 ---
+
+## ساختار دیتابیس
+![ict_exam.drawio.png](ict_exam.drawio.png)
 
 ## ⚙️ نصب
 
