@@ -1,6 +1,8 @@
+from django.utils import timezone
 from rest_framework import serializers
 
 from account_app.models import User
+from apis.v1.account.exceptions import CustomValidationError
 from exam_app.models import Exam, Question, ExamAttempt, Option, UserAnswer
 
 
@@ -113,19 +115,26 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
         # get user id
         user_id = self.context.get('request').user.id
 
-        # filter exam_attempts
-        exam_attempts = Exam.objects.filter(
+        # filter exam
+        exam = Exam.objects.filter(
             id=exam_pk
-        ).only("title")
+        ).only("title", "exam_start_time")
 
-        # check exam attempts
-        if not exam_attempts:
+        # check exam attempts if not exits rais validation error
+        if not exam:
             raise serializers.ValidationError(
                 detail={"message": "No exam attempts for this exam."},
                 code="not-found"
             )
-        # else:
-        #     pass
+        else:
+            if exam.last().exam_start_time > timezone.now():
+                raise CustomValidationError(
+                    {
+                        "message": "The exam hasn't started yet.",
+                        "success": False
+                    }
+                )
+
         # validate unique_together
         if ExamAttempt.objects.filter(
             exam_id=exam_pk,
