@@ -56,10 +56,6 @@ class UserLoginView(views.APIView):
                 "success": False
             })
 
-        # تلاش موفق => reset failed attempts
-        from axes.helpers import reset
-        reset(request)
-
         # create token
         token = get_tokens_for_user(user)
         role = user.user_type
