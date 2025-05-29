@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "treebeard",
     "django_filters",
-    "axes"
+    # "axes"
 ]
 
 MIDDLEWARE = [
@@ -241,18 +241,18 @@ STORAGES = {
 
 # django axes config
 # max retries
-AXES_FAILURE_LIMIT = 5
+# AXES_FAILURE_LIMIT = 5
 # lock after many times
-AXES_COOLOFF_TIME = 10
-AXES_USERNAME_FORM_FIELD = 'phone_number'
-AXES_RESET_ON_SUCCESS = True
+# AXES_COOLOFF_TIME = 10
+# AXES_USERNAME_FORM_FIELD = 'phone_number'
+# AXES_RESET_ON_SUCCESS = True
 
 # config authentication exes
-AUTHENTICATION_BACKENDS = [
+# AUTHENTICATION_BACKENDS = [
     # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
-    'axes.backends.AxesStandaloneBackend',
+    # 'axes.backends.AxesStandaloneBackend',
 
     # Django ModelBackend is the default authentication backend.
-    'django.contrib.auth.backends.ModelBackend',
-]
+    # 'django.contrib.auth.backends.ModelBackend',
+# ]
 
