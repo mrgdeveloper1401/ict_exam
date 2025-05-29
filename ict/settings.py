@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "treebeard",
     "django_filters",
-    # "axes"
+    "axes"
 ]
 
 MIDDLEWARE = [
@@ -55,7 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'axes.middleware.AxesMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
 ROOT_URLCONF = 'ict.urls'
@@ -241,18 +241,16 @@ STORAGES = {
 
 # django axes config
 # max retries
-# AXES_FAILURE_LIMIT = 5
-# lock after many times
-# AXES_COOLOFF_TIME = 10
-# AXES_USERNAME_FORM_FIELD = 'phone_number'
-# AXES_RESET_ON_SUCCESS = True
+AXES_FAILURE_LIMIT = 5
+AXES_RESET_ON_SUCCESS = True
+AXES_COOLOFF_TIME = timedelta(minutes=10)
 
 # config authentication exes
-# AUTHENTICATION_BACKENDS = [
+AUTHENTICATION_BACKENDS = [
     # AxesStandaloneBackend should be the first backend in the AUTHENTICATION_BACKENDS list.
-    # 'axes.backends.AxesStandaloneBackend',
+    'axes.backends.AxesStandaloneBackend',
 
     # Django ModelBackend is the default authentication backend.
-    # 'django.contrib.auth.backends.ModelBackend',
-# ]
+    'django.contrib.auth.backends.ModelBackend',
+]
 

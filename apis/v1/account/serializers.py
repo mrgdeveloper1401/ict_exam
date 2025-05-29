@@ -1,5 +1,5 @@
-from django.contrib.auth import authenticate
 from rest_framework import serializers
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
@@ -169,3 +169,39 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         if data['new_password'] != data['confirm_password']:
             raise serializers.ValidationError({"confirm_password": "رمزهای عبور وارد شده یکسان نیستند."})
         return data
+
+
+class CustomTokenPerSerializer(TokenObtainPairSerializer):
+    pass
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    old_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_new_password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        # get user
+        user = self.context.get("user")
+
+        # validate password
+        if attrs['new_password'] != attrs['confirm_new_password']:
+            raise CustomValidationError(
+                {
+                    "message": "password not mach",
+                    "successfully": False
+                }
+            )
+
+        # get old password
+        user_check_password = user.check_password(attrs['old_password'])
+
+        # check old password
+        if not user_check_password:
+            raise CustomValidationError(
+                {
+                    "message": "old password not correct",
+                    "successfully": False
+                }
+            )
+        return attrs

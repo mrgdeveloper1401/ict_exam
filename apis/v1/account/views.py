@@ -1,9 +1,10 @@
 # from axes.handlers.proxy import AxesProxyHandler
 from django.contrib.auth import authenticate
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, views, response, permissions, exceptions
+from rest_framework import viewsets, mixins, views, response, permissions, exceptions, generics
 
 from account_app.models import User, Student, UserLoginLogs
+from ict.utils.response import success_response
 from . import serializers
 from .exceptions import CustomValidationError
 from .permissions import NotAuthenticated
@@ -99,3 +100,25 @@ class StudentProfileViewSet(
             "grade",
             "parent_phone"
         )
+
+
+class ResetPasswordView(views.APIView):
+    serializer_class = serializers.ChangePasswordSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def put(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.serializer_class(data=request.data, context={"user": user})
+        serializer.is_valid(raise_exception=True)
+
+        # get new password
+        new_password = serializer.validated_data['new_password']
+
+        # set new password
+        user.set_password(new_password)
+        user.save()
+        return success_response(
+            "update password",
+            data="successfully updated data"
+        )
+

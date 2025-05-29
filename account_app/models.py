@@ -25,6 +25,7 @@ class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
     nation_code = models.CharField(blank=True, max_length=11, validators=[unique_nation_code_in_layer_app])
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    is_verify = models.BooleanField(default=False, help_text=_("ایا کاربر تایید شده هست"))
 
     objects = UserManager()
 

@@ -1,6 +1,6 @@
-from rest_framework import routers
+from rest_framework import routers, generics
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenVerifyView
+from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView
 
 from . import views
 
@@ -15,4 +15,6 @@ urlpatterns = [
     path("", include(router.urls)),
     path("login/", views.UserLoginView.as_view(), name="login"),
     path("verify/", TokenVerifyView.as_view(), name="jwt_verify"),
+    path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path("rest_password/", views.ResetPasswordView.as_view(), name="password_reset"),
 ]
