@@ -3,7 +3,7 @@ from django.utils import timezone
 from django.db import models
 
 from core_app.manager import SoftManager
-from core_app.validation import validate_image_size
+# from core_app.validation import validate_image_size
 
 
 class ModifyMixin(models.Model):

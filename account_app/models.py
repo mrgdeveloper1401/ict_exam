@@ -53,7 +53,6 @@ class Student(ModifyMixin, SoftDeleteMixin):
 
 
 class Otp(CreateMixin):
-    # TODO, run otp in redis
     phone_number = models.CharField(validators=[PhoneNumberValidator()], max_length=15, db_index=True)
     otp_code = models.CharField(max_length=8)
     device_ip = models.GenericIPAddressField(blank=True, null=True)

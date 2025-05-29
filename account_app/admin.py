@@ -3,7 +3,6 @@ from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
 
 from . import models
-# Register your models here.
 
 
 @admin.register(models.Otp)
@@ -81,6 +80,8 @@ class UserLoginLogsAdmin(admin.ModelAdmin):
     list_display = ("user", "device_ip", "user_agent", "created_at")
     search_fields = ("user__phone_number",)
     list_per_page = 20
+    raw_id_fields = ("user",)
+    help_text = _("برای جست و جو میتوانید از شماره موبایل کابر استفاده کنید")
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related("user").only(
@@ -89,3 +90,12 @@ class UserLoginLogsAdmin(admin.ModelAdmin):
             "user_agent",
             "created_at"
         )
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj = ...):
+        return False

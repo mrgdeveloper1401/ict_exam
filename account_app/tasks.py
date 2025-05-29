@@ -2,8 +2,6 @@ from celery import shared_task
 from decouple import config
 from django.core.mail import send_mail
 
-from . import models
-
 
 @shared_task
 def send_reset_password_code(to_email, code):

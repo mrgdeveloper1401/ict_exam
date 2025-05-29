@@ -3,7 +3,7 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, mixins, views, response, status, permissions
 import random
 
-from account_app.models import User, Student
+from account_app.models import User, Student, UserLoginLogs
 from . import serializers
 from .permissions import NotAuthenticated
 from .serializers import TokenResponseSerializer
@@ -41,6 +41,15 @@ class UserLoginView(views.APIView):
         token = serializer.validated_data['token']
         role = serializer.validated_data['tole']
         is_staff = serializer.validated_data['is_staff']
+        user = serializer.validated_data['user']
+
+        # save user log
+        UserLoginLogs.objects.create(
+            user=user,
+            device_ip=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR"),
+            user_agent=request.META.get('HTTP_USER_AGENT', '')
+        )
+
         return response.Response(
             {
                 'token': token,

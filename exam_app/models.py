@@ -1,5 +1,4 @@
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models import Q
 
 from core_app.models import ModifyMixin, SoftDeleteMixin, UpdateMixin
@@ -43,12 +42,6 @@ class Exam(ModifyMixin, SoftDeleteMixin):
         null=True,
         help_text=_("کاور ازمون")
     )
-    # exam_start_time = models.DateTimeField(
-    #     # TODO, clean migration
-    #     blank=True,
-    #     null=True,
-    #     help_text=_("زمان شروع ازمون؟")
-    # )
 
     class Meta:
         db_table = "exam"
@@ -72,18 +65,6 @@ class Question(ModifyMixin, SoftDeleteMixin):
         help_text=_("Full text of the question")
     )
     is_active = models.BooleanField(default=True, help_text=_("فعال"))
-    # image = models.ForeignKey(
-    #     "core_app.Image",
-    #     on_delete=models.PROTECT,
-    #     help_text=_("Optional image related to the question"),
-    #     null=True,
-    #     blank=True
-    # )
-    # score = models.PositiveIntegerField(
-    #     default=1,
-    #     validators=[MinValueValidator(1)],
-    #     help_text=_("Points awarded for correct answer to this question")
-    # )
 
     class Meta:
         db_table = "question"
@@ -150,10 +131,6 @@ class ExamAttempt(ModifyMixin, SoftDeleteMixin):
         blank=True,
         help_text=_("نمره")
     )
-    # is_passed = models.BooleanField(
-    #     default=False,
-    #     help_text=_("Did the user pass this attempt?")
-    # )
     ip_address = models.GenericIPAddressField(
         help_text=_("ادرس ای پی کاربر")
     )

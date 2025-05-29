@@ -24,8 +24,6 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('is_active', True)
-        # extra_fields.setdefault('is_verify', True)
-        # extra_fields.setdefault('user_type', "admin")
 
         # بررسی فیلدهای الزامی برای سوپر یوزر
         required_fields = ('email', 'nation_code', 'full_name')

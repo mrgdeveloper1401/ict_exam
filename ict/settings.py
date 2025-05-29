@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     "account_app.apps.AccountAppConfig",
     "exam_app.apps.ExamAppConfig",
     "core_app.apps.CoreAppConfig",
-    "course_app.apps.CourseAppConfig",
     "rest_framework",
     "storages",
 
