@@ -31,8 +31,8 @@ class ExamAdmin(admin.ModelAdmin):
 
 @admin.register(models.UserAnswer)
 class UserAnswerAdmin(admin.ModelAdmin):
-    raw_id_fields = ("question",)
-    list_display = ("question", "answer", "created_at",)
+    raw_id_fields = ("question", "option")
+    list_display = ("question", "option", "answer", "created_at",)
     list_editable = ("answer",)
     search_fields = ("question__exam__title",)
     search_help_text = _("برای جست و جو میتوانید از عنوان ازمون استفاده کنید")
@@ -41,11 +41,13 @@ class UserAnswerAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
             "question__exam",
+            "option"
         ).only(
             "answer",
             "question__exam__title",
             "question__text",
             "created_at",
+            "option__question__text",
         )
 
 
@@ -74,9 +76,8 @@ class ExamAttemptAdmin(admin.ModelAdmin):
 @admin.register(models.Option)
 class OptionAdmin(admin.ModelAdmin):
     raw_id_fields = ("question",)
-    list_display = ("question", "is_correct", "created_at")
-    list_filter = ("is_correct", "created_at")
-    list_editable = ("is_correct",)
+    list_display = ("question", "created_at")
+    list_filter = ("created_at",)
     date_hierarchy = "created_at"
     list_per_page = 30
 
@@ -84,7 +85,6 @@ class OptionAdmin(admin.ModelAdmin):
         return super().get_queryset(request).select_related(
             "question__exam"
         ).only(
-            "is_correct",
             "created_at",
             "question__exam__title",
         )

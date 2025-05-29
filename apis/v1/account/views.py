@@ -60,7 +60,7 @@ class UserLoginView(views.APIView):
         from axes.helpers import reset
         reset(request)
 
-        # ایجاد توکن
+        # create token
         token = get_tokens_for_user(user)
         role = user.user_type
         is_staff = user.is_staff

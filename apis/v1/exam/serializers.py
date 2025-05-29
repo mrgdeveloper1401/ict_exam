@@ -51,7 +51,7 @@ class ExamSerializer(serializers.ModelSerializer):
 class OptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Option
-        fields = ("text",)
+        fields = ("text", "id")
 
 
 class QuestionSerializer(serializers.ModelSerializer):
@@ -207,22 +207,70 @@ class CreateUserAnswerSerializer(serializers.Serializer):
         data = validated_data.pop("data")
 
         if not data:
-            raise CustomValidationError(
-                {
-                    "message": "you must send data",
-                    "success": False
-                }
+            raise CustomValidationError({
+                "message": "you must send data",
+                "success": False
+            })
+
+        request = self.context.get("request")
+        user = request.user
+
+        # پیدا کردن امتحان
+        first_question = data[0]["question"]
+        exam = first_question.exam
+
+        # تلاش کاربر برای امتحان
+        exam_attempt = ExamAttempt.objects.filter(
+            user=user,
+            exam=exam,
+        ).first()
+
+        if not exam_attempt:
+            raise CustomValidationError({
+                "message": "شما ابتدا باید در آزمون ثبت‌نام کنید.",
+                "success": False
+            })
+
+        correct_count = 0
+        total_count = len(data)
+        created_answers = []
+
+        for item in data:
+            question = item["question"]
+            answer_value = item["answer"]
+
+            # بررسی وجود گزینه صحیح برای سوال
+            try:
+                selected_option = question.options.get(id=int(answer_value))
+            except Option.DoesNotExist:
+                selected_option = None
+
+            # بررسی صحت پاسخ
+            is_correct = selected_option.is_correct if selected_option else False
+            if is_correct:
+                correct_count += 1
+
+            # ذخیره پاسخ
+            user_answer = UserAnswer(
+                question=question,
+                option=selected_option,
+                answer=answer_value,
             )
-        else:
-            created_data = [
-                UserAnswer(
-                    question=i['question'],
-                    answer=i['answer'],
-                )
-                for i in data
-            ]
-            if created_data:
-                created =  UserAnswer.objects.bulk_create(created_data)
-                return {
-                    "data": created
-                }
+            created_answers.append(user_answer)
+
+        # ذخیره‌ی انبوه پاسخ‌ها
+        UserAnswer.objects.bulk_create(created_answers)
+
+        #  نمره
+        score = round((correct_count / total_count) * 100, 2)
+
+        # save score user
+        exam_attempt.score = score
+        exam_attempt.end_time = timezone.now()
+        exam_attempt.save()
+
+        return {
+            "score": score,
+            "correct_answers": correct_count,
+            "total_questions": total_count
+        }

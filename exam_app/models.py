@@ -100,7 +100,7 @@ class Option(ModifyMixin, SoftDeleteMixin):
         ordering = ('-created_at',)
 
     def __str__(self):
-        return f'{self.question.text[:30]} {self.is_correct}'
+        return f'{self.question.text[:30]}'
 
 
 class ExamAttempt(ModifyMixin, SoftDeleteMixin):
@@ -160,6 +160,13 @@ class UserAnswer(CreateMixin, UpdateMixin, SoftDeleteMixin):
         on_delete=models.PROTECT,
         help_text=_("سوال"),
         related_name='question_user_answers',
+    )
+    option = models.ForeignKey(
+        Option,
+        on_delete=models.PROTECT,
+        related_name='option_user_answers',
+        blank=True,
+        null=True,
     )
     answer = models.CharField(
         help_text=_("پاسخ"),
