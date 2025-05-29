@@ -87,6 +87,7 @@ class Question(ModifyMixin, SoftDeleteMixin):
 
     class Meta:
         db_table = "question"
+        ordering = ('-created_at',)
 
     def __str__(self):
         return f"{self.exam.title}"

@@ -48,8 +48,15 @@ class ExamSerializer(serializers.ModelSerializer):
             data.pop("is_active", None)
         return data
 
+class OptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Option
+        fields = ("text",)
+
 
 class QuestionSerializer(serializers.ModelSerializer):
+    options = OptionSerializer(many=True, read_only=True)
+
     class Meta:
         model = Question
         exclude = (
@@ -159,16 +166,6 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
             exam_id=exam_pk,
             user_id=user_id,
             ip_address=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR")
-        )
-
-
-class OptionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Option
-        exclude = (
-            "is_deleted",
-            "deleted_at",
-            "is_correct"
         )
 
 

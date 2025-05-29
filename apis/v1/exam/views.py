@@ -1,4 +1,4 @@
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from rest_framework import viewsets, permissions, exceptions
 
 from exam_app.models import Exam, Question, ExamAttempt, Option, UserAnswer
@@ -64,6 +64,10 @@ class QuestionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = Question.objects.filter(
             exam_id=self.kwargs["exam_pk"],
+        ).prefetch_related(
+            Prefetch(
+                lookup="options", queryset=Option.objects.only("text", "question_id")
+            )
         ).defer(
             "is_deleted",
             "deleted_at",

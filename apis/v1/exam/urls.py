@@ -1,4 +1,3 @@
-from rest_framework import urls
 from django.urls import path, include
 from rest_framework_nested import routers
 
@@ -8,7 +7,6 @@ app_name = 'v1_exam'
 
 router = routers.SimpleRouter()
 router.register('exam', views.ExamViewSet, basename='exam')
-router.register('option', views.OptionViewSet, basename='option')
 router.register("user_answer", views.UserAnswerViewSet, basename='user_answer')
 
 exam_router = routers.NestedSimpleRouter(router, r'exam', lookup='exam')
