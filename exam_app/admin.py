@@ -31,24 +31,21 @@ class ExamAdmin(admin.ModelAdmin):
 
 @admin.register(models.UserAnswer)
 class UserAnswerAdmin(admin.ModelAdmin):
-    raw_id_fields = ("attempt", "question", "option")
-    list_display = ("attempt", "question", "option", "answered_at", "user_phone")
-
-    def user_phone(self, obj):
-        return obj.attempt.user.phone_number
+    raw_id_fields = ("question",)
+    list_display = ("question", "answer", "created_at",)
+    list_editable = ("answer",)
+    search_fields = ("question__exam__title",)
+    search_help_text = _("برای جست و جو میتوانید از عنوان ازمون استفاده کنید")
+    list_per_page = 20
 
     def get_queryset(self, request):
         return super().get_queryset(request).select_related(
-            "attempt__user",
             "question__exam",
-            "option",
         ).only(
-            "answered_at",
-            "attempt__user__phone_number",
+            "answer",
             "question__exam__title",
             "question__text",
-            "option__is_correct",
-            "option__question__text"
+            "created_at",
         )
 
 

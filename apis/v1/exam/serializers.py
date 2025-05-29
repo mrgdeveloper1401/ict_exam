@@ -169,6 +169,12 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
         )
 
 
+class SimpleQuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ("text",)
+
+
 class UserAnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAnswer
@@ -176,3 +182,47 @@ class UserAnswerSerializer(serializers.ModelSerializer):
             "is_deleted",
             "deleted_at",
         )
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        # edit representation question
+        data['question'] = SimpleQuestionSerializer(instance.question).data
+        return data
+
+
+class CreateFieldUserAnswerSerializer(serializers.Serializer):
+    answer = serializers.CharField()
+    question = serializers.PrimaryKeyRelatedField(
+        queryset=Question.objects.select_related("exam").only(
+            "exam__title"
+        )
+    )
+
+
+class CreateUserAnswerSerializer(serializers.Serializer):
+    data = CreateFieldUserAnswerSerializer(many=True)
+
+    def create(self, validated_data):
+        data = validated_data.pop("data")
+
+        if not data:
+            raise CustomValidationError(
+                {
+                    "message": "you must send data",
+                    "success": False
+                }
+            )
+        else:
+            created_data = [
+                UserAnswer(
+                    question=i['question'],
+                    answer=i['answer'],
+                )
+                for i in data
+            ]
+            if created_data:
+                created =  UserAnswer.objects.bulk_create(created_data)
+                return {
+                    "data": created
+                }

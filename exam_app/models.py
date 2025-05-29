@@ -1,8 +1,10 @@
 from django.db import models
 from django.db.models import Q
 
-from core_app.models import ModifyMixin, SoftDeleteMixin, UpdateMixin
+from core_app.models import ModifyMixin, SoftDeleteMixin, UpdateMixin, CreateMixin
 from django.utils.translation import gettext_lazy as _
+
+from exam_app.enums import AnswerEnums
 
 
 class Exam(ModifyMixin, SoftDeleteMixin):
@@ -149,34 +151,26 @@ class ExamAttempt(ModifyMixin, SoftDeleteMixin):
         return f"{self.exam.title}"
 
 
-class UserAnswer(UpdateMixin, SoftDeleteMixin):
+class UserAnswer(CreateMixin, UpdateMixin, SoftDeleteMixin):
     """
     User answer model
     """
-    attempt = models.ForeignKey(
-        ExamAttempt,
-        on_delete=models.PROTECT,
-        related_name='user_answers',
-        help_text=_("شرکت در ازمون")
-    )
     question = models.ForeignKey(
         Question,
         on_delete=models.PROTECT,
-        help_text=_("سوال")
+        help_text=_("سوال"),
+        related_name='question_user_answers',
     )
-    option = models.ForeignKey(
-        Option,
-        on_delete=models.PROTECT,
-        help_text=_("جواب")
-    )
-    answered_at = models.DateTimeField(
-        auto_now_add=True,
-        help_text=_("زمان پاسخ")
+    answer = models.CharField(
+        help_text=_("پاسخ"),
+        choices=AnswerEnums.choices,
+        # TODO, clean migrations
+        blank=True,
     )
 
     class Meta:
         db_table = "user_answer"
-        unique_together = ('attempt', 'question')
+        ordering = ('-created_at',)
 
     def __str__(self):
-        return self.attempt.user.phone_number
+        return f"{self.question.exam.title} {self.answer} {self.created_at}"

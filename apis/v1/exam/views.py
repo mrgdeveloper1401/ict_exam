@@ -145,4 +145,17 @@ class UserAnswerViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get_queryset(self):
-        return UserAnswer.objects.filter(attempt__user=self.request.user).defer("is_deleted", "deleted_at")
+        return UserAnswer.objects.filter(
+            question__exam_id=self.kwargs["exam_pk"],
+        ).select_related("question__exam").only(
+            "created_at",
+            "updated_at",
+            "answer",
+            "question__text",
+            "question__exam__title"
+        )
+
+    def get_serializer_class(self):
+        if self.action == "create":
+            return serializers.CreateUserAnswerSerializer
+        return super().get_serializer_class()
