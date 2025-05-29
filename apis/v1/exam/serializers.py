@@ -15,6 +15,7 @@ class ExamSerializer(serializers.ModelSerializer):
     creator = serializers.PrimaryKeyRelatedField(
         read_only=True
     )
+    question_count = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Exam

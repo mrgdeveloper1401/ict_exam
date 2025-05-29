@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, exceptions
 
@@ -41,7 +42,9 @@ class ExamViewSet(viewsets.ModelViewSet):
             "is_active",
             "exam_image",
             "exam_type"
-        )
+        ).annotate(
+        question_count=Count('questions')
+    )
         if self.request.user.is_staff is False:
                 query.filter(is_active=True)
         return query
