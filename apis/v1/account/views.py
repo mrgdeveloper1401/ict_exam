@@ -1,4 +1,4 @@
-from axes.handlers.proxy import AxesProxyHandler
+# from axes.handlers.proxy import AxesProxyHandler
 from django.contrib.auth import authenticate
 from drf_spectacular.utils import extend_schema
 from rest_framework import viewsets, mixins, views, response, permissions, exceptions
