@@ -1,4 +1,4 @@
-exam_ict
+# exam_ict
 
 ## swagger-ui doc
 - api.dxcode.ir/api/schema/swagger-ui
