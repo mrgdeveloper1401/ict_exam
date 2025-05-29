@@ -1,21 +1,27 @@
-# exam_ict
+# 📘 exam_ict
 
-## swagger-ui doc
-- api.dxcode.ir/api/schema/swagger-ui
+یک سیستم آزمون آنلاین طراحی‌شده با Django و Docker.
 
-## requirements
-- python:3.11 higher
-- django 5.2 higher
+---
 
-## install
-- pip install -r requirements/development.txt (for development)
-- pip install -r requirements/production.txt (for production)
+## 🔗 Swagger UI
 
-## build on vps
-- cd folder base image
-- gunzip ict_1.0.0.tar.gz
-- docker load -i ict_1.0.0.tar
-- docker-compose up --build
+[مشاهده مستندات API](http://api.dxcode.ir/api/schema/swagger-ui)
 
-# relation schema
-![ict_exam.drawio.png](ict_exam.drawio.png)
+---
+
+## 📦 پیش‌نیازها
+
+- Python 3.11 یا بالاتر
+- Django 5.2 یا بالاتر
+
+---
+
+## ⚙️ نصب
+
+```bash
+# نصب برای توسعه‌دهندگان
+pip install -r requirements/development.txt
+
+# نصب برای محیط تولید
+pip install -r requirements/production.txt
