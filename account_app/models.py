@@ -25,7 +25,6 @@ class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
     nation_code = models.CharField(blank=True, max_length=11, validators=[unique_nation_code_in_layer_app])
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
-    # is_verify = models.BooleanField(default=False, help_text=_('Is this user verified?'))
 
     objects = UserManager()
 
@@ -43,8 +42,6 @@ class User(AbstractBaseUser, PermissionsMixin, ModifyMixin, SoftDeleteMixin):
 class Student(ModifyMixin, SoftDeleteMixin):
     user = models.OneToOneField(User, on_delete=models.PROTECT, related_name="student")
     student_number = models.CharField(max_length=11, blank=True)
-    # student_image = models.ForeignKey("core_app.Image", on_delete=models.DO_NOTHING, related_name="student_image",
-    #                                   null=True, blank=True)
     student_image = models.ImageField(upload_to="student_images/%Y/%m/%d", blank=True, null=True,
                                       help_text=_("عکس دانش اموز"), validators=[validate_image_size])
     grade = models.CharField(max_length=20, blank=True)
@@ -60,7 +57,6 @@ class Otp(CreateMixin):
     phone_number = models.CharField(validators=[PhoneNumberValidator()], max_length=15, db_index=True)
     otp_code = models.CharField(max_length=8)
     device_ip = models.GenericIPAddressField(blank=True, null=True)
-    # is_used = models.BooleanField(default=False, help_text="Is this OTP used?")
 
     class Meta:
         db_table = "otp"
@@ -74,3 +70,12 @@ class Otp(CreateMixin):
     @property
     def is_expired(self):
         return self.expired_otp < timezone.now() if self.expired_otp else None
+
+
+class UserLoginLogs(CreateMixin, SoftDeleteMixin):
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING, related_name="user_login_logs")
+    device_ip = models.GenericIPAddressField()
+    user_agent = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "user_login_logs"
