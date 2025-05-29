@@ -47,8 +47,8 @@ class UserLoginView(views.APIView):
         )
 
         #  check axes
-        if AxesProxyHandler.is_locked(request):
-            raise exceptions.PermissionDenied("Too many failed login attempts. Try again later.")
+        # if AxesProxyHandler.is_locked(request):
+        #     raise exceptions.PermissionDenied("Too many failed login attempts. Try again later.")
 
         if not user:
             raise CustomValidationError({
