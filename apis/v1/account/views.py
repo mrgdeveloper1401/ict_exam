@@ -51,25 +51,6 @@ class UserLoginView(views.APIView):
         )
 
 
-# class RequestOtpView(generics.CreateAPIView):
-#     serializer_class = serializers.RequestOtpSerializer
-#     permission_classes = (NotAuthenticated,)
-#     queryset = User.objects.only(
-#         "phone_number"
-#     )
-
-
-# class RequestOtpVerifyView(views.APIView):
-#     serializer_class = serializers.RequestVerifyOtpSerializer
-#     permission_classes = (NotAuthenticated,)
-#
-#     def post(self, request, *args, **kwargs):
-#         serializer = self.serializer_class(data=request.data, context={"request": request})
-#         serializer.is_valid(raise_exception=True)
-#         token = serializer.validated_data['token']
-#         return response.Response(token)
-
-
 class StudentProfileViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
@@ -93,64 +74,3 @@ class StudentProfileViewSet(
             "grade",
             "parent_phone"
         )
-
-
-class PasswordResetRequestView(views.APIView):
-    serializer_class = serializers.PasswordResetRequestSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data['phone_number']
-
-            # تولید کد تأیید (مثلاً 4 رقمی)
-            verification_code = str(random.randint(1000, 9999))
-
-            # ذخیره کد در کش به مدت 5 دقیقه
-            cache.set(f'password_reset_{phone_number}', verification_code, 300)
-
-            # در اینجا باید کد را به کاربر ارسال کنید (با SMS یا ایمیل)
-            # این بخش بستگی به سرویس SMS شما دارد
-            # send_sms(phone_number, f'کد تأیید شما: {verification_code}')
-
-            return response.Response({
-                'message': 'کد تأیید به شماره تلفن شما ارسال شد.',
-                'phone_number': phone_number,
-                'expires_in': '5 دقیقه'
-            }, status=status.HTTP_200_OK)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class PasswordResetConfirmView(views.APIView):
-    serializer_class = serializers.PasswordResetConfirmSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            phone_number = serializer.validated_data['phone_number']
-            new_password = serializer.validated_data['new_password']
-
-            try:
-                user = User.objects.get(phone_number=phone_number)
-                user.set_password(new_password)
-                user.save()
-
-                # پاک کردن کد از کش
-                cache.delete(f'password_reset_{phone_number}')
-
-                return response.Response({
-                    'message': 'رمز عبور با موفقیت تغییر یافت.'
-                }, status=status.HTTP_200_OK)
-            except User.DoesNotExist:
-                return response.Response({
-                    'error': 'کاربر یافت نشد.'
-                }, status=status.HTTP_404_NOT_FOUND)
-        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LogOutView(views.APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def post(self, request, *args, **kwargs):
-        del request.auth.token
-        return response.Response(status=status.HTTP_204_NO_CONTENT)

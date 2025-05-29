@@ -21,7 +21,9 @@ class ExamSerializer(serializers.ModelSerializer):
         model = Exam
         exclude = (
             "is_deleted",
-            "deleted_at"
+            "deleted_at",
+            "created_at",
+            "updated_at",
         )
 
     def create(self, validated_data):
@@ -41,7 +43,6 @@ class ExamSerializer(serializers.ModelSerializer):
 
         # pop property for not admin user
         if not request.user.is_staff:
-            data.pop("is_active", None)
             data.pop("is_active", None)
         return data
 
@@ -123,7 +124,8 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
                 detail={"message": "No exam attempts for this exam."},
                 code="not-found"
             )
-
+        # else:
+        #     pass
         # validate unique_together
         if ExamAttempt.objects.filter(
             exam_id=exam_pk,

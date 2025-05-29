@@ -24,7 +24,8 @@ class ExamAdmin(admin.ModelAdmin):
             "created_at",
             "is_active",
             "description",
-            "exam_image"
+            "exam_image",
+            "exam_start_time"
         )
 
 

@@ -1,5 +1,4 @@
 from django.db.models import Count
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, permissions, exceptions
 
 from exam_app.models import Exam, Question, ExamAttempt, Option, UserAnswer
@@ -34,17 +33,14 @@ class ExamViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         query = Exam.objects.select_related("creator").only(
             "title",
-            "created_at",
-            "updated_at",
             "description",
             "time_limit",
             "creator__full_name",
             "is_active",
             "exam_image",
-            "exam_type"
-        ).annotate(
-        question_count=Count('questions')
-    )
+            "exam_type",
+            "exam_start_time"
+        ).annotate(question_count=Count('questions'))
         if self.request.user.is_staff is False:
                 query.filter(is_active=True)
         return query
