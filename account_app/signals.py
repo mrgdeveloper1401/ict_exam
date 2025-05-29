@@ -1,6 +1,8 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from rest_framework.exceptions import PermissionDenied
+from axes.signals import user_locked_out
 
 from . import models
 
@@ -13,3 +15,8 @@ def create_student(sender, instance, created, **kwargs):
             user=instance,
             student_number=f"s{year}{instance.id}"
         )
+
+
+@receiver(user_locked_out)
+def raise_permission_denied(*args, **kwargs):
+    raise PermissionDenied("Too many failed login attempts")

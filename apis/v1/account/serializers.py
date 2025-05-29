@@ -63,39 +63,19 @@ class CreateResponseSerializer(serializers.Serializer):
 
 
 class UserLoginSerializer(serializers.Serializer):
-    """
-    used serializer UserLoginView
-    """
     phone_number = serializers.CharField()
     password = serializers.CharField()
 
     def validate(self, attrs):
-        # get phone and password
         phone_number = attrs.get('phone_number')
         password = attrs.get('password')
 
-        # authenticate user request, phone, password
-        user = authenticate(
-            request=self.context.get('request'),
-            phone_number=phone_number,
-            password=password,
-        )
+        if not phone_number or not password:
+            raise CustomValidationError({
+                "message": "phone and password are required",
+                "success": False
+            })
 
-        # invalid phone and password
-        if not user:
-            raise CustomValidationError(
-                {
-                    "message": "phone and password is invalid",
-                    "success": False
-                }
-            )
-
-        # create jwt token
-        token = get_tokens_for_user(user)
-        attrs['token'] = token
-        attrs['tole'] = user.user_type
-        attrs['is_staff'] = user.is_staff
-        attrs['user'] = user
         return attrs
 
 

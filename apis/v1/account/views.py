@@ -1,12 +1,14 @@
-from django.core.cache import cache
+from axes.handlers.proxy import AxesProxyHandler
+from django.contrib.auth import authenticate
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, views, response, status, permissions
-import random
+from rest_framework import viewsets, mixins, views, response, permissions, exceptions
 
 from account_app.models import User, Student, UserLoginLogs
 from . import serializers
+from .exceptions import CustomValidationError
 from .permissions import NotAuthenticated
 from .serializers import TokenResponseSerializer
+from .token import get_tokens_for_user
 
 
 class UserRegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
@@ -25,39 +27,57 @@ class UserRegisterViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin):
 
 class UserLoginView(views.APIView):
     """
-    login by phone number and password
+    if user wrong password and phone he block until 10 minute
     """
     serializer_class = serializers.UserLoginSerializer
     permission_classes = (NotAuthenticated,)
 
-    @extend_schema(
-        responses=TokenResponseSerializer
-    )
+    @extend_schema(responses=TokenResponseSerializer)
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        # get token after validated data
-        token = serializer.validated_data['token']
-        role = serializer.validated_data['tole']
-        is_staff = serializer.validated_data['is_staff']
-        user = serializer.validated_data['user']
+        phone_number = serializer.validated_data['phone_number']
+        password = serializer.validated_data['password']
 
-        # save user log
+        user = authenticate(
+            request=request,
+            phone_number=phone_number,
+            password=password,
+        )
+
+        #  check axes
+        if AxesProxyHandler.is_locked(request):
+            raise exceptions.PermissionDenied("Too many failed login attempts. Try again later.")
+
+        if not user:
+            raise CustomValidationError({
+                "message": "phone and password is invalid",
+                "success": False
+            })
+
+        # تلاش موفق => reset failed attempts
+        from axes.helpers import reset
+        reset(request)
+
+        # ایجاد توکن
+        token = get_tokens_for_user(user)
+        role = user.user_type
+        is_staff = user.is_staff
+
+        # save information log
         UserLoginLogs.objects.create(
             user=user,
-            device_ip=request.META.get('REMOTE_ADDR', "X_FORWARDED_FOR"),
+            device_ip=request.META.get('REMOTE_ADDR', request.META.get('HTTP_X_FORWARDED_FOR', '')),
             user_agent=request.META.get('HTTP_USER_AGENT', '')
         )
 
-        return response.Response(
-            {
-                'token': token,
-                "is_staff": is_staff,
-                "role": role,
-                "success": True,
-            }
-        )
+        return response.Response({
+            'token': token,
+            'is_staff': is_staff,
+            'role': role,
+            'success': True,
+        })
 
 
 class StudentProfileViewSet(
