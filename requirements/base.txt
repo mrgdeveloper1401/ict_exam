@@ -13,3 +13,4 @@ python-ulid==3.0.0
 django-filter==25.1
 httpx==0.28.1
 gunicorn==23.0.0
+django-axes==8.0.0
