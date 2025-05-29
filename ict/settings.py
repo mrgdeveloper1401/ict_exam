@@ -244,7 +244,7 @@ STORAGES = {
 AXES_FAILURE_LIMIT = 5
 # lock after many times
 AXES_COOLOFF_TIME = 10
-AXES_LOCKOUT_PARAMETERS = ['username', "ip_address"]
+AXES_LOCKOUT_PARAMETERS = ['phone_number',]
 AXES_RESET_ON_SUCCESS = True
 
 # config authentication exes
