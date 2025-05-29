@@ -118,7 +118,7 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
         # filter exam
         exam = Exam.objects.filter(
             id=exam_pk
-        ).only("title", "exam_start_time")
+        ).only("title")
 
         # check exam attempts if not exits rais validation error
         if not exam:
@@ -126,14 +126,15 @@ class ExamAttemptSerializer(serializers.ModelSerializer):
                 detail={"message": "No exam attempts for this exam."},
                 code="not-found"
             )
-        else:
-            if exam.last().exam_start_time > timezone.now():
-                raise CustomValidationError(
-                    {
-                        "message": "The exam hasn't started yet.",
-                        "success": False
-                    }
-                )
+        # else:
+        # Checking the exam entry time
+        #     if exam.last().exam_start_time > timezone.now():
+        #         raise CustomValidationError(
+        #             {
+        #                 "message": "The exam hasn't started yet.",
+        #                 "success": False
+        #             }
+        #         )
 
         # validate unique_together
         if ExamAttempt.objects.filter(

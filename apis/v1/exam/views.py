@@ -39,7 +39,7 @@ class ExamViewSet(viewsets.ModelViewSet):
             "is_active",
             "exam_image",
             "exam_type",
-            "exam_start_time"
+            # "exam_start_time"
         ).annotate(question_count=Count('questions'))
         if self.request.user.is_staff is False:
                 query.filter(is_active=True)

@@ -43,12 +43,12 @@ class Exam(ModifyMixin, SoftDeleteMixin):
         null=True,
         help_text=_("کاور ازمون")
     )
-    exam_start_time = models.DateTimeField(
-        # TODO, clean migration
-        blank=True,
-        null=True,
-        help_text=_("زمان شروع ازمون؟")
-    )
+    # exam_start_time = models.DateTimeField(
+    #     # TODO, clean migration
+    #     blank=True,
+    #     null=True,
+    #     help_text=_("زمان شروع ازمون؟")
+    # )
 
     class Meta:
         db_table = "exam"

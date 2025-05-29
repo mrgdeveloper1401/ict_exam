@@ -25,7 +25,7 @@ class ExamAdmin(admin.ModelAdmin):
             "is_active",
             "description",
             "exam_image",
-            "exam_start_time"
+            # "exam_start_time"
         )
 
 
