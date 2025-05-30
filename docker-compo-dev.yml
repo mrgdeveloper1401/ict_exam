@@ -92,6 +92,10 @@ services:
       - 5432
     volumes:
       - postgres_data_dev:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ict
+      POSTGRES_DB: ictDB
+      POSTGRES_PASSWORD: ict.2025
     restart: always
 
   nginx:
