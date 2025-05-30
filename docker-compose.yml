@@ -63,4 +63,4 @@ services:
 
 volumes:
 #  static_files:
-  postgres_data_dv:
+  postgres_data:

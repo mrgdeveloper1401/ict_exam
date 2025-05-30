@@ -118,4 +118,4 @@ services:
 
 volumes:
   smtp4dev-data:
-  postgres:
+  postgres_data_dev:
