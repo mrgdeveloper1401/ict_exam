@@ -15,7 +15,7 @@ DATABASES = {
         # "NAME": config("COMPOSE_POSTGRES_DB", cast=str),
         "NAME": config("DEV_COMPOSE_POSTGRES_DB", cast=str),
         # "USER": config("COMPOSE_POSTGRES_USER", cast=str),
-        "USER": config("DEV_COMPOSE_POSTGRES_USER", cast=str),
+        "USER": "postgres",
         # "PASSWORD": config("COMPOSE_POSTGRES_PASSWORD", cast=str),
         "PASSWORD": config("DEV_COMPOSE_POSTGRES_PASSWORD", cast=str),
     }
