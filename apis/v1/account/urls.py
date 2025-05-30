@@ -1,4 +1,4 @@
-from rest_framework import routers, generics
+from rest_framework import routers
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView
 

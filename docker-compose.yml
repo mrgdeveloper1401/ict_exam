@@ -38,6 +38,13 @@ services:
     depends_on:
       - django
 
+  celery:
+    container_name: celery
+    image: celery_base:1.0.0
+    volumes:
+      - .:/home
+    entrypoint: ['celery', "-A", "ict.dj_celery", "worker", "-l", "INFO"]
+
 #  master:
 #    container_name: locust_master
 #    image: docker.arvancloud.ir/locustio/locust:2.8.5

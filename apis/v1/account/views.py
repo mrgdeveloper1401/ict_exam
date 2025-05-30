@@ -103,6 +103,9 @@ class StudentProfileViewSet(
 
 
 class ResetPasswordView(views.APIView):
+    """
+    this view for reset password \n
+    """
     serializer_class = serializers.ChangePasswordSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
