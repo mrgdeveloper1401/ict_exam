@@ -111,10 +111,13 @@ services:
 
   celery:
     container_name: celery
+    restart: always
     image: celery_base:1.0.0
     volumes:
       - .:/home
     entrypoint: ['celery', "-A", "ict.dj_celery", "worker", "-l", "INFO"]
+    depends_on:
+      - db
 
 volumes:
   smtp4dev-data:
