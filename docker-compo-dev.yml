@@ -115,7 +115,7 @@ services:
     image: celery_base:1.0.0
     volumes:
       - .:/home
-    entrypoint: ['celery', "-A", "ict.dj_celery", "worker", "-l", "INFO"]
+    entrypoint: ['celery', "-A", "/home/ict.dj_celery", "worker", "-l", "INFO"]
     depends_on:
       - db
 
