@@ -70,5 +70,52 @@ services:
       #Specifies the port the IMAP server will listen on - allows standard email clients to view/retrieve messages
       #"ServerOptions__ImapPort"=143
 
+  django:
+    container_name: django
+    build: .
+    ports:
+      - "8000:8000"
+    expose:
+      - 8000
+    env_file: ".env"
+    restart: always
+    entrypoint: ["sh", "-c", "/app/scripts/django_sh.sh"]
+    depends_on:
+      - db
+
+  db:
+    container_name: ictdb
+    image: docker.arvancloud.ir/postgres:16.9-alpine
+    expose:
+      - 5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: always
+    environment:
+      POSTGRES_USER: dev_user
+      POSTGRES_DB: devDB
+      POSTGRES_PASSWORD: dv.2025
+
+  nginx:
+    container_name: nginx
+    image: docker.arvancloud.ir/nginx:1.27.5-alpine
+    command: ["nginx", "-g", "daemon off;"]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - /etc/letsencrypt/archive/api.dxcode.ir/:/etc/letsencrypt/archive/api.dxcode.ir/
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - django
+
+  celery:
+    container_name: celery
+    image: celery_base:1.0.0
+    volumes:
+      - .:/home
+    entrypoint: ['celery', "-A", "ict.dj_celery", "worker", "-l", "INFO"]
+
 volumes:
   smtp4dev-data:
+  postgres:
