@@ -111,16 +111,15 @@ services:
     depends_on:
       - django
 
-  celery:
-    container_name: celery
-    restart: always
-    image: celery_base:1.0.0
-    volumes:
-      - .:/home
-    entrypoint: ['celery', "-A", "/home/ict.dj_celery", "worker", "-l", "INFO"]
-    command: "ls /home"
-    depends_on:
-      - db
+#  celery:
+#    container_name: celery
+#    restart: always
+#    image: celery_base:1.0.0
+#    volumes:
+#      - .:/home
+#    entrypoint: ['celery', "-A", "/home/ict.dj_celery", "worker", "-l", "INFO"]
+#    depends_on:
+#      - db
 
 volumes:
   smtp4dev-data:
