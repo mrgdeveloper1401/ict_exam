@@ -10,7 +10,7 @@ ALLOWED_HOSTS = ''.join(config('PROD_ALLOWED_HOSTS', cast=list)).split(",")
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": "ict",
+        "HOST": "ictdb",
         "PORT": "5432",
         "NAME": "ictDB",
         "USER": "ict",
