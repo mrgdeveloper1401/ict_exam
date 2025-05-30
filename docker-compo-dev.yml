@@ -89,7 +89,7 @@ services:
     expose:
       - 5432
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data_dev:/var/lib/postgresql/data
     restart: always
     environment:
       POSTGRES_USER: dev_user
