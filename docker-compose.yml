@@ -19,11 +19,16 @@ services:
       - 5432
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    restart: always
     environment:
       POSTGRES_USER: ${COMPOSE_POSTGRES_USER}
       POSTGRES_DB: ${COMPOSE_POSTGRES_DB}
       POSTGRES_PASSWORD: ${COMPOSE_POSTGRES_PASSWORD}
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${COMPOSE_POSTGRES_USER} -d ${COMPOSE_POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
 
   nginx:
     container_name: nginx
