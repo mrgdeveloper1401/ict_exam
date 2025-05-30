@@ -95,7 +95,7 @@ services:
     environment:
       POSTGRES_USER: ict
       POSTGRES_DB: ictDB
-      POSTGRES_PASSWORD: ict.2025
+      POSTGRES_PASSWORD: ictdb.2025
     restart: always
 
   nginx:
