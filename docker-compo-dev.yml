@@ -119,11 +119,11 @@ services:
     container_name: celery
     restart: always
     image: celery_base:1.0.0
-    volumes:
-      - .:/home
-    command: ['celery', "-A", "/home/ict.dj_celery", "worker", "-l", "INFO"]
+    build:
+      context: celery
     depends_on:
       - db
+      - django
 
 volumes:
   smtp4dev-data:
