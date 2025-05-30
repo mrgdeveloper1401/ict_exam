@@ -92,9 +92,9 @@ services:
       - postgres_data_dev:/var/lib/postgresql/data
     restart: always
     environment:
-      POSTGRES_USER: dev_user
-      POSTGRES_DB: devDB
-      POSTGRES_PASSWORD: dv.2025
+      POSTGRES_USER: ${DEV_COMPOSE_POSTGRES_USER}
+      POSTGRES_DB: ${DEV_COMPOSE_POSTGRES_DB}
+      POSTGRES_PASSWORD: ${DEV_COMPOSE_POSTGRES_PASSWORD}
 
   nginx:
     container_name: nginx
@@ -116,6 +116,7 @@ services:
     volumes:
       - .:/home
     entrypoint: ['celery', "-A", "/home/ict.dj_celery", "worker", "-l", "INFO"]
+    command: "ls /home"
     depends_on:
       - db
 
