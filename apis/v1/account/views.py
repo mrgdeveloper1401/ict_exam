@@ -1,7 +1,7 @@
 # from axes.handlers.proxy import AxesProxyHandler
 from django.contrib.auth import authenticate
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, mixins, views, response, permissions, exceptions, generics
+from rest_framework import viewsets, mixins, views, response, permissions, exceptions, generics, status
 
 from account_app.models import User, Student, UserLoginLogs
 from ict.utils.response import success_response
@@ -125,3 +125,17 @@ class ResetPasswordView(views.APIView):
             data="successfully updated data"
         )
 
+
+class AdminSendEmailView(views.APIView):
+    permission_classes = (permissions.IsAdminUser,)
+    serializer_class = serializers.AdminSendEmailSerializer
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return success_response(
+            message="send email",
+            data="successfully send email",
+            status=status.HTTP_201_CREATED
+        )

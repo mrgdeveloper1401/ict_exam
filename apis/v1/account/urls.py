@@ -17,4 +17,5 @@ urlpatterns = [
     path("verify/", TokenVerifyView.as_view(), name="jwt_verify"),
     path('jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path("rest_password/", views.ResetPasswordView.as_view(), name="password_reset"),
+    path("send_email_to_user/", views.AdminSendEmailView.as_view(), name="send_email_to_user"),
 ]

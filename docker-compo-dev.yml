@@ -121,6 +121,7 @@ services:
     image: celery_base:1.0.0
     build:
       context: celery
+      dockerfile: Dockerfile
     depends_on:
       - db
       - django

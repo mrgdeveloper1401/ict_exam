@@ -4,6 +4,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from apis.v1.account.exceptions import CustomValidationError
 from apis.v1.account.token import get_tokens_for_user
 from account_app.models import User, Student, Otp
+from account_app.tasks import send_reset_password_code
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -205,3 +206,16 @@ class ChangePasswordSerializer(serializers.Serializer):
                 }
             )
         return attrs
+
+
+class AdminSendEmailSerializer(serializers.Serializer):
+    subject = serializers.CharField()
+    message = serializers.CharField()
+    to_email = serializers.EmailField()
+
+    def create(self, validated_data):
+        return send_reset_password_code.delay(
+            to_email=validated_data['to_email'],
+            subject=validated_data['subject'],
+            message=validated_data['message'],
+        )

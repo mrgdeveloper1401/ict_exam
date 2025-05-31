@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 import os
 from datetime import timedelta, datetime
+from email.policy import default
 from pathlib import Path
 from decouple import config
 
@@ -200,14 +201,15 @@ AUTH_USER_MODEL = "account_app.User"
 IMAGE_SIZE_MAX = 2
 
 # config email backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = config('EMAIL_HOST_USER', cast=str)
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', cast=str)
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL', cast=str)
-
+if config("USE_EMAIL", cast=bool, default=False):
+    EMAIL_BACKEND = config("EMAIL_BACKEND", cast=str, default="django.core.mail.backends.smtp.EmailBackend")
+    EMAIL_HOST = config("EMAIL_HOST", default="localhost", cast=str)
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER", default="", cast=str)
+    EMAIL_PORT = int(config("EMAIL_PORT", default=25, cast=int))
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD", default="", cast=str)
+    EMAIL_USE_SSL = config("EMAIL_USE_SSL", cast=bool, default=False)
+    EMAIL_USE_TLS = config("EMAIL_USE_TLS", cast=bool, default=False)
+    # DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL", default="", cast=str)
 
 # config logging in django
 # with logging django
@@ -287,4 +289,3 @@ AUTHENTICATION_BACKENDS = [
     # Django ModelBackend is the default authentication backend.
     'django.contrib.auth.backends.ModelBackend',
 ]
-

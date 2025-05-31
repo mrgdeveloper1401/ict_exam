@@ -67,3 +67,10 @@ class UpdateMixin(models.Model):
     #     verbose_name = "Image"
     #     verbose_name_plural = "Images"
     #     ordering = ('-created_at',)
+
+
+class NewsLatter(ModifyMixin, SoftDeleteMixin):
+    email = models.EmailField()
+
+    class Meta:
+        db_table = 'news_latter'

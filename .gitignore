@@ -380,3 +380,4 @@ pyrightconfig.json
 images
 ict_1.0.0.tar
 general_log_django
+docker-compose-smtp.yml
